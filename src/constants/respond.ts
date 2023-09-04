@@ -29,7 +29,7 @@ function onError(error: any, message?: string): ErrorResponse {
 
 function onSuccess<T>(data?: T, total: number = 1): SuccessResponse<T> {
   return {
-    data: data || null,
+    data: data ?? null,
     success: true,
     message: Constant.NETWORK_STATUS_MESSAGE.SUCCESS,
     count: data ? (typeof data == 'object' && 'length' in data ? (data as any).length : 1) : 0,

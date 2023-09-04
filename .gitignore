@@ -133,5 +133,3 @@ dist
 build
 upload_file
 test.js
-
-dmtp_key_pair.json

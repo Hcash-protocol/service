@@ -1,2 +1,3 @@
-export const ABI_MUSIC = {
-};
+const ABI = {};
+
+export { ABI };

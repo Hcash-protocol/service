@@ -7,9 +7,9 @@ const SignatureMiddleware = async (req: Request, res: Response, next: NextFuncti
   try {
     let { authorize } = req.headers;
     if (!authorize) {
-      // return res
-      //   .status(NETWORK_STATUS_CODE.UNAUTHORIZED)
-      //   .json(onError(NETWORK_STATUS_MESSAGE.UNAUTHORIZED));
+      return res
+        .status(NETWORK_STATUS_CODE.UNAUTHORIZED)
+        .json(onError(NETWORK_STATUS_MESSAGE.UNAUTHORIZED));
     }
     authorize = authorize as string;
     const [message, signature] = authorize.split(':');
