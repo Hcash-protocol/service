@@ -19,7 +19,7 @@ services:
     container_name: mongodb
     image: mongo:latest
     volumes:
-      - mongodb:/data/db
+      - mongodb-hcash:/data/db
     networks:
       - ${NETWORK}
 networks:
@@ -28,4 +28,4 @@ networks:
     name: ${NETWORK}
 
 volumes:
-  mongodb:
+  mongodb-hcash:
