@@ -8,9 +8,6 @@ const globalVariable: any = global;
 globalVariable.isSyncingGetDataFromSmartContract = false;
 const onJobGetDataFromSmartContract = async () => {
   try {
-    logger.info(
-      'onJobGetDataFromSmartContract:' + globalVariable.isSyncingGetDataFromSmartContract,
-    );
     if (globalVariable.isSyncingGetDataFromSmartContract) return;
     globalVariable.isSyncingGetDataFromSmartContract = true;
     const lastSynchronize = await Synchronize.findOne().sort({ last_block_number: -1 });

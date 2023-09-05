@@ -4,7 +4,7 @@ import { RegisterRoutes } from '../build/routes';
 import cors from 'cors';
 import express, { Request, Response } from 'express';
 import swaggerUi from 'swagger-ui-express';
-import { logger } from './constants';
+import { logger } from '@constants';
 import { connectToMongoDB, startSynchronizeDataFromSmartContract } from '@providers';
 
 startSynchronizeDataFromSmartContract();

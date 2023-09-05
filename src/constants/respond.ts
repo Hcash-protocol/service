@@ -1,4 +1,4 @@
-import { logger, Constant } from '@constants';
+import { logger, Constant } from '.';
 type SuccessResponse<T> = {
   data: T | any;
   message: string;

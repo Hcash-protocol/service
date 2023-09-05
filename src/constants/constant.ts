@@ -1,11 +1,3 @@
-export interface IToken {
-  contract_address: string;
-  decimals: number;
-  symbol: string;
-  name: string;
-  logo: string;
-}
-
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 const ZERO_BYTES32 = '0x0000000000000000000000000000000000000000000000000000000000000000';
 
