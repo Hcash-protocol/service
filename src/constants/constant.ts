@@ -26,7 +26,11 @@ const Constant = {
     INTERNAL_SERVER_ERROR: 'Internal server error',
     NOT_ENOUGH_RIGHT: 'Not Enough Rights',
   },
-  ROOT_PATH: __dirname.replace('build\\src\\constants', ''),
+  ROOT_PATH: __dirname.replace('build/src/constants', ''),
+  EVENT: {
+    DEPOSIT: 'deposit',
+    WITHDRAWL: 'withdrawl',
+  },
 };
 
 const ZKEY_PATH = Constant.ROOT_PATH + '/circuit.zkey';

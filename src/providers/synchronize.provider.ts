@@ -14,7 +14,7 @@ const onJobGetDataFromSmartContract = async () => {
 
     if (!lastSynchronize?.last_block_number) {
       await Synchronize.create({
-        last_block_number: 33395644,
+        last_block_number: 39786224,
       });
       globalVariable.isSyncingGetDataFromSmartContract = false;
       return;
@@ -27,10 +27,11 @@ const onJobGetDataFromSmartContract = async () => {
     );
     logger.info(`Synchronizing from ${last_block_number} to ${last_block_number_onchain}`);
     await synchronize(last_block_number, last_block_number_onchain, listTxHash);
-    await Synchronize.create({
-      last_block_number: last_block_number_onchain,
-      transactions: listTxHash,
-    });
+    if (listTxHash.length !== 0 || last_block_number_onchain > last_block_number + 500)
+      await Synchronize.create({
+        last_block_number: last_block_number_onchain,
+        transactions: listTxHash,
+      });
     logger.info(`Synchronized ${listTxHash.length} transactions`);
   } catch (error: any) {
     logger.error(`onJobGetDataFromSmartContract: ${error.message}`);
@@ -44,37 +45,49 @@ const synchronize = async (
   listTxHash: string[],
 ) => {
   const zkService = Singleton.getZkInstance();
-  const withdrawEvents = await HcashContract.getPastEvents('Withdraw', {
-    fromBlock: last_block_number_sync,
-    toBlock: last_block_number_onchain,
-  });
+  try {
+    const depositEvents = await HcashContract.getPastEvents('Deposit', {
+      fromBlock: last_block_number_sync,
+      toBlock: last_block_number_onchain,
+    });
+    logger.info(`Synchronizing ${depositEvents.length} Deposit`);
 
-  const depositEvents = await HcashContract.getPastEvents('Deposit', {
-    fromBlock: last_block_number_sync,
-    toBlock: last_block_number_onchain,
-  });
-  logger.info(`Synchronizing ${withdrawEvents.length} Withdrawl`);
-  logger.info(`Synchronizing ${depositEvents.length} Deposit`);
-
-  for (const value of withdrawEvents as any[]) {
-    const blockData = await getBlockByNumber(value.blockNumber);
-    await zkService.withdrawHistory(
-      value.returnValues.recipient.toLowerCase(),
-      value.transactionHash,
-      blockData.timestamp.toString(),
-    );
-    listTxHash.push(value.transactionHash);
+    for (const value of depositEvents as any[]) {
+      const blockData = await getBlockByNumber(value.blockNumber);
+      await zkService.depositHistory(
+        value.returnValues.from.toLowerCase(),
+        value.returnValues.amount,
+        value.transactionHash,
+        blockData.timestamp.toString(),
+      );
+      listTxHash.push(value.transactionHash);
+    }
+  } catch (error: any) {
+    logger.error(`[depositEvents]${error.message}`);
   }
 
-  for (const value of depositEvents as any[]) {
-    const blockData = await getBlockByNumber(value.blockNumber);
-    await zkService.depositHistory(
-      value.returnValues.from.toLowerCase(),
-      value.returnValues.amount,
-      value.transactionHash,
-      blockData.timestamp.toString(),
-    );
-    listTxHash.push(value.transactionHash);
+  try {
+    const withdrawlEvents = await HcashContract.getPastEvents('Withdrawl', {
+      fromBlock: last_block_number_sync,
+      toBlock: last_block_number_onchain,
+    });
+
+    logger.info(`Synchronizing ${withdrawlEvents.length} Withdrawl`);
+
+    for (const withdrawlEvent of withdrawlEvents as any[]) {
+      const blockData = await getBlockByNumber(withdrawlEvent.blockNumber);
+      const { from, value } = await web3.eth.getTransaction(withdrawlEvent.transactionHash);
+      await zkService.withdrawHistory(
+        from,
+        value,
+        withdrawlEvent.returnValues.recipient.toLowerCase(),
+        withdrawlEvent.transactionHash,
+        blockData.timestamp.toString(),
+      );
+      listTxHash.push(withdrawlEvent.transactionHash);
+    }
+  } catch (error: any) {
+    logger.error(`[withdrawlEvent]${error.message}`);
   }
 };
 

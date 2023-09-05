@@ -1,3 +1,4 @@
+import { ABI } from '@constants';
 import Web3 from 'web3';
 import { Contract } from 'web3-eth-contract';
 
@@ -11,6 +12,6 @@ const getBlockByNumber = async (blockNumber: number) => {
   return await web3.eth.getBlock(blockNumber);
 };
 
-const HcashContract = newContract([], '');
+const HcashContract = newContract(ABI.HcashPool.abi, ABI.HcashPool.address);
 
 export { web3, HcashContract, newContract, getBlockByNumber };

@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  backend:
+    container_name: hcash_backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    ports:
+      - '3001:3001'
+    depends_on:
+      - mongodb
+    networks:
+      - ${NETWORK}
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb:/data/db
+    networks:
+      - ${NETWORK}
+networks:
+  hcash-network:
+    driver: bridge
+    name: ${NETWORK}
+
+volumes:
+  mongodb:

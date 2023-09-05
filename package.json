@@ -7,10 +7,8 @@
     "build": "tsoa spec-and-routes && tsc",
     "start": "node build/src/server.js",
     "format": "yarn prettier --write .",
-    "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
-    "deploy": "ssh scimta \"bash -i -c 'cd /home/ubuntu/blc-awesome-dapp/back-end && git pull && pm2 stop all && yarn && yarn build && pm2 restart all'\"",
-    "postinstall": "patch-package",
-    "compile": "truffle compile"
+    "dev": "docker-compose -f ./docker-compose.local.yml up -d --build && concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
+    "postinstall": "patch-package"
   },
   "author": "",
   "license": "ISC",
