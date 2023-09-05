@@ -16,7 +16,7 @@ services:
       - ${NETWORK}
 
   mongodb:
-    container_name: mongodb
+    container_name: hcash_mongodb
     image: mongo:latest
     volumes:
       - mongodb-hcash:/data/db
